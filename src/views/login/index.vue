@@ -33,7 +33,7 @@
       </div>
     </div>
 </template>
-<script  src="./js/script.js"></script>
+
 <script>
 export default {
   methods: {
@@ -43,10 +43,8 @@ export default {
       let switchC1 = document.querySelector("#switch-c1");
       let switchC2 = document.querySelector("#switch-c2");
       let switchCircle = document.querySelectorAll(".switch__circle");
-      let switchBtn = document.querySelectorAll(".switch-btn");
       let aContainer = document.querySelector("#a-container");
       let bContainer = document.querySelector("#b-container");
-      let allButtons = document.querySelectorAll(".submit");
 
       switchCtn.classList.add("is-gx");
       setTimeout(function(){
@@ -69,4 +67,4 @@ export default {
 }
 </script>
 
-<style src="./css/style.css"></style>
+<style src="./css/style.css" scoped></style>

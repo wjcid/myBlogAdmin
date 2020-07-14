@@ -1,0 +1,192 @@
+<template>
+<div>
+<Header />
+<Aside />
+<div class="main">
+<div class="table_name">博客文章编辑</div>
+    <el-form ref="form" :model="formInfo" label-width="120px">
+    
+    <el-form-item label="文章标题：">
+        <el-input
+        placeholder="请输入标题"
+        v-model="formInfo.title"
+        clearable>
+        </el-input>
+    </el-form-item>   
+    <el-form-item label="插图：">
+        <el-upload
+            class="upload-demo"
+            action="https://jsonplaceholder.typicode.com/posts/">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+    </el-form-item>
+    <el-form-item label="文章类型：">
+        <el-select v-model="formInfo.type" clearable placeholder="请选择">
+        <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value">
+        </el-option>
+        </el-select>
+    </el-form-item>  
+    <el-form-item label="标签：">
+        <el-checkbox-group v-model="formInfo.tags">
+        <el-checkbox v-for="tag in tags" :key="tag.index" :label="tag.name"></el-checkbox>
+        </el-checkbox-group>
+    </el-form-item>
+    <el-form-item label="文章内容：">
+    <quill-editor 
+            v-model="formInfo.content" 
+            ref="myQuillEditor" 
+            :options="editorOption" 
+            @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+            @change="onEditorChange($event)">
+        </quill-editor>
+    </el-form-item>
+    <el-form-item>
+        <el-button type="primary">确认提交</el-button>
+        <el-button>取消</el-button>
+    </el-form-item>
+  </el-form>
+</div>
+</div>
+</template>
+
+<script>
+import { quillEditor } from "vue-quill-editor"; //调用编辑器
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.bubble.css';
+
+const jsOptions = [
+    {
+        index: 1,
+        name: 'PHP',
+        model: 'tag1'
+    },{
+        index: 2,
+        name: '数据库',
+        model: 'tag2'
+    },{
+        index: 3,
+        name: 'Linux',
+        model: 'tag3'
+    },{
+        index: 4,
+        name: 'Vue',
+        model: 'tag4'
+    },{
+        index: 5,
+        name: 'go',
+        model: 'tag5'
+    }];
+export default {
+  components: {
+    quillEditor
+  },
+  /*methods: {
+    onSubmit() {
+        this.$axios.post(this.$consts.BASE_URL+'editInfo', {
+            id: this.$route.query.id,
+            name: this.name,
+            phone: this.phone,
+            email: this.email,
+            unit: this.unit,
+            remark: this.remark
+          }).then(res=>{
+            if (res.data.code == 0) {
+              this.$message({message:'操作有误',type:'error'});
+              return
+            } else {
+              this.$message({message:'修改成功',type:'success'});
+              this.reload()
+            }
+          })
+    }
+  },*/
+  methods: {
+        onEditorReady() { // 准备编辑器
+ 
+        },
+        onEditorBlur(){}, // 失去焦点事件
+        onEditorFocus(){}, // 获得焦点事件
+        onEditorChange(){}, // 内容改变事件
+         // 转码
+        escapeStringHTML(str) {
+            str = str.replace(/&lt;/g,'<');
+            str = str.replace(/&gt;/g,'>');
+            return str;
+        }
+    },
+    computed: {
+        editor() {
+            return this.$refs.myQuillEditor.quill;
+        },
+    },
+    mounted() {
+        let content = '';  // 请求后台返回的内容字符串
+        this.str = this.escapeStringHTML(content);
+    },
+  data () {
+      return {
+        options: [{
+            value: '1',
+            label: '技术总结'
+            }, {
+            value: '2',
+            label: '书籍分享'
+            }, {
+            value: '3',
+            label: '生活日志'
+        }],
+        tags: jsOptions,
+        formInfo:{
+            title: '',
+            pic_url: '',
+            content: '',
+            tags: [],
+            type: ''
+        },
+        content: `<p></p><p><br></p><ol><li><strong><em>Or drag/paste an image here.</em></strong></li><li><strong><em>rerew</em></strong></li><li><strong><em>rtrete</em></strong></li><li><strong><em>tytrytr</em></strong></li><li><strong><em>uytu</em></strong></li></ol>`,
+        editorOption: {}
+      }
+  }
+}
+</script>
+
+<style src="" scoped>
+.main {
+      float: left;
+      width: 85%;
+      padding-top: 100px;
+}
+.table_name {
+      padding-bottom: 40px;
+      font-size: 18px;
+}
+.el-input {
+  width: 300px;
+  float: left;
+}
+.el-button {
+  float: left;
+}
+.el-form {
+  padding-top: 30px;
+}
+.quill-editor {
+    background: white;
+    width: 95%;
+}
+.upload-demo {
+    text-align: left;
+}
+.el-select {
+    float: left;
+}
+.el-checkbox {
+    float: left;
+}
+</style>
