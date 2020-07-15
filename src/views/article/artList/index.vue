@@ -4,6 +4,7 @@
 <Aside />
 <div class="main">
 <div class="table_name">个人博客文章管理</div>
+<div class="addarc"><el-button type="primary" icon="el-icon-edit" style="float:left;" @click="$router.push('/article/form')">写文章</el-button></div>
 <el-tabs v-model="activeName">
   <el-tab-pane label="技术总结" name="first">
 <el-table
@@ -176,5 +177,11 @@ export default {
 .el-pagination {
       width: 40%;
       padding-top: 30px;
+}
+.addarc {
+  width: 95%;
+  margin: 0 auto;
+  overflow: hidden;
+  padding-bottom: 20px;
 }
 </style>

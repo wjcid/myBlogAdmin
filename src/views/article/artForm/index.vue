@@ -22,7 +22,7 @@
         </el-upload>
     </el-form-item>
     <el-form-item label="文章类型：">
-        <el-select v-model="formInfo.type" clearable placeholder="请选择">
+        <el-select v-model="formInfo.type" clearable placeholder="请选择" @change="tags_data">
         <el-option
         v-for="item in options"
         :key="item.value"
@@ -47,7 +47,7 @@
     </el-form-item>
     <el-form-item>
         <el-button type="primary">确认提交</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="$router.push('/article/list')">取消</el-button>
     </el-form-item>
   </el-form>
 </div>
@@ -60,28 +60,6 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 
-const jsOptions = [
-    {
-        index: 1,
-        name: 'PHP',
-        model: 'tag1'
-    },{
-        index: 2,
-        name: '数据库',
-        model: 'tag2'
-    },{
-        index: 3,
-        name: 'Linux',
-        model: 'tag3'
-    },{
-        index: 4,
-        name: 'Vue',
-        model: 'tag4'
-    },{
-        index: 5,
-        name: 'go',
-        model: 'tag5'
-    }];
 export default {
   components: {
     quillEditor
@@ -107,6 +85,23 @@ export default {
     }
   },*/
   methods: {
+      tags_data(value) {
+          switch (value) {
+              
+              case '1':
+                this.tags = []
+                this.tags = this.jsOptions 
+                break;
+              case '2':
+                this.tags = []
+                this.tags = this.readOptions 
+                break;
+              case '3':
+                this.tags = []
+                this.tags = this.liveOptions 
+                break;
+          }
+      },
         onEditorReady() { // 准备编辑器
  
         },
@@ -141,7 +136,49 @@ export default {
             value: '3',
             label: '生活日志'
         }],
-        tags: jsOptions,
+        tags: [],//标签渲染数据
+        jsOptions: [
+        {
+            index: 1,
+            name: 'PHP',
+        },{
+            index: 2,
+            name: '数据库',
+        },{
+            index: 3,
+            name: 'Linux',
+        },{
+            index: 4,
+            name: 'Vue',
+        },{
+            index: 5,
+            name: 'go',
+        }],
+        readOptions: [
+        {
+            index: 1,
+            name: '小说',
+        },{
+            index: 2,
+            name: '理财',
+        },{
+            index: 3,
+            name: '心理',
+        },{
+            index: 4,
+            name: '码农技术',
+        }],
+        liveOptions: [
+        {
+            index: 1,
+            name: '兴趣',
+        },{
+            index: 2,
+            name: '健康',
+        },{
+            index: 3,
+            name: '杂谈',
+        }],
         formInfo:{
             title: '',
             pic_url: '',
