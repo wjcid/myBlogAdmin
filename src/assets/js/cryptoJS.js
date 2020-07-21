@@ -13,9 +13,7 @@ export default {
     const key = CryptoJS.enc.Utf8.parse(keyStr);
     const iv = CryptoJS.enc.Utf8.parse(ivStr);
     const encoded = CryptoJS.AES.encrypt(word, key, {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.ZeroPadding
+        iv: iv
     }).toString()
     return encoded;
   },
@@ -25,9 +23,7 @@ export default {
     let iv = CryptoJS.enc.Utf8.parse(ivStr);
 
     var decrypt = CryptoJS.AES.decrypt(word, key, {
-      iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.ZeroPadding
+      iv
     });
     return decrypt.toString(CryptoJS.enc.Utf8);
   }

@@ -3,7 +3,7 @@
 <Header />
 <Aside />
 <div class="main">
-<div class="table_name">添加博客文章</div>
+<div class="table_name">博客文章编辑</div>
     <el-form ref="form" :model="formInfo" label-width="120px">
     
     <el-form-item label="文章标题：">
@@ -33,7 +33,7 @@
     </el-form-item>  
     <el-form-item label="标签：">
         <el-checkbox-group v-model="formInfo.tags">
-        <el-checkbox v-for="tag in checktags" :key="tag.index" :label="tag.name"></el-checkbox>
+        <el-checkbox v-for="tag in tags" :key="tag.index" :label="tag.name"></el-checkbox>
         </el-checkbox-group>
     </el-form-item>
     <el-form-item label="文章内容：">
@@ -64,9 +64,13 @@ export default {
   components: {
     quillEditor
   },
+  created () {
+    this.tagoptions();
+  },
   methods: {
       onSubmit() {
-        this.$axios.post(this.$consts.BASE_URL+'addArt', {
+        this.$axios.post(this.$consts.BASE_URL+'editArt', {
+            id: this.$route.query.id,
             title: this.formInfo.title,
             pic_url: this.formInfo.pic_url,
             type: this.formInfo.type,
@@ -87,16 +91,16 @@ export default {
           switch (value) {
               
               case '1':
-                this.checktags = []
-                this.checktags = this.jsOptions 
+                this.tags = []
+                this.tags = this.jsOptions 
                 break;
               case '2':
-                this.checktags = []
-                this.checktags = this.readOptions 
+                this.tags = []
+                this.tags = this.readOptions 
                 break;
               case '3':
-                this.checktags = []
-                this.checktags = this.liveOptions 
+                this.tags = []
+                this.tags = this.liveOptions 
                 break;
           }
       },
@@ -111,6 +115,15 @@ export default {
             str = str.replace(/&lt;/g,'<');
             str = str.replace(/&gt;/g,'>');
             return str;
+        },
+        tagoptions(){
+            if (this.formInfo.type == 1) {
+               this.tags = this.jsOptions
+            } else if(this.formInfo.type == 2) {
+                this.tags = this.readOptions
+            }else{
+                this.tags = this.liveOptions
+            }
         }
     },
     computed: {
@@ -134,7 +147,7 @@ export default {
             value: '3',
             label: '生活日志'
         }],
-        checktags: [],//标签渲染数据
+        tags: [],//标签渲染数据
         jsOptions: [
         {
             index: 1,
@@ -178,11 +191,11 @@ export default {
             name: '杂谈',
         }],
         formInfo:{
-            title: '',
-            pic_url: './',
-            content: '',
-            tags: [],
-            type: ''
+            title: this.$route.query.title,
+            pic_url: this.$route.query.pic_url,
+            content: this.$route.query.content,
+            tags: this.$route.query.tags.split(','),
+            type: this.$route.query.type
         },
         content: `<p></p><p><br></p><ol><li><strong><em>Or drag/paste an image here.</em></strong></li><li><strong><em>rerew</em></strong></li><li><strong><em>rtrete</em></strong></li><li><strong><em>tytrytr</em></strong></li><li><strong><em>uytu</em></strong></li></ol>`,
         editorOption: {}

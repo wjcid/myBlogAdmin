@@ -11,6 +11,10 @@ export default {
       {
         path: 'form',
         component: resolve => require(['@/views/article/artForm'], resolve)
+      },
+      {
+        path: 'edit',
+        component: resolve => require(['@/views/article/artForm/edit_form.vue'], resolve)
       }
     ]
   }

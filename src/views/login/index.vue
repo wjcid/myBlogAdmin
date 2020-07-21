@@ -10,11 +10,12 @@
         </form>
       </div>
       <div class="container b-container" id="b-container">
-        <form class="form" id="b-form" method="" action="">
+        <form class="form" id="b-form" method="" action="" :model="loginInfo">
           <h2 class="form_title title">用户登录</h2>
-          <input class="form__input" type="text" placeholder="account">
-          <input class="form__input" type="password" placeholder="Password" autocomplete><a class="form__link">忘记密码?</a>
-          <button class="form__button button submit">登录</button>
+          <input class="form__input" type="text" placeholder="account/phone" v-model="loginInfo.account">
+          <input class="form__input" type="password" placeholder="Password" autocomplete v-model="loginInfo.password">
+          <a class="form__link">忘记密码?</a>
+          <button class="form__button button submit" @click="_submit">登录</button>
         </form>
       </div>
       <div class="switch" id="switch-cnt">
@@ -35,7 +36,19 @@
 </template>
 
 <script>
+import CryptoJS from '@/assets/js/cryptoJS.js'
 export default {
+  data() {
+      return {
+        //登录信息
+        loginInfo: {
+          account: '',
+          password: ''
+        },
+        keyStr: 'api_blog_keydata',
+        ivStr: 'api_blog_ivStr_k'
+      }
+  },
   methods: {
     switch_box() {
       
@@ -61,6 +74,23 @@ export default {
       bContainer.classList.toggle("is-txl");
       bContainer.classList.toggle("is-z200");
       
+    },
+    _submit() {
+      let pwd = CryptoJS.encrypt(this.loginInfo.password, this.keyStr, this.ivStr)
+        //服务端验证 是否存在
+        this.$axios.post(this.$consts.BASE_URL+'login', {
+            account: this.loginInfo.account,
+            password: pwd
+          }).then(res=>{
+            if (res.data.code == 10200) {
+              localStorage.setItem('name',res.data.data.account)
+              localStorage.setItem('token',res.data.data.token)
+              this.$router.replace('/home');
+            } else {
+              this.$message({message:'账户或密码有误',type:'error'});
+              return
+            }
+          })
     }
   }
   

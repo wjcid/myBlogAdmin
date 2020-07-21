@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-axios.defaults.timeout = '10000'
+axios.defaults.timeout = '100000'
 
 axios.interceptors.request.use(
     config => {

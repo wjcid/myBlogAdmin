@@ -8,7 +8,40 @@
 <el-tabs v-model="activeName">
   <el-tab-pane label="技术总结" name="first">
 <el-table
-:data="tableData"
+:data="tableData1.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+style="width: 100%">
+  <el-table-column
+      :prop="tit.prop"
+      :label="tit.label"
+      :width="tit.width" v-for="(tit, index) in $consts.ARTICLE_TABLE" :key='index'>
+      <el-table-column
+        :prop="tit1.prop"
+        :label="tit1.label"
+        :width="tit1.width" v-for="(tit1, index1) in tit.children" :key='index1'>
+  </el-table-column>
+  </el-table-column>
+  <el-table-column label="操作" width="160">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+           type="primary"
+          @click="editArt(scope.$index, scope.row)">修改</el-button>
+            <el-button slot="reference" size="mini" type="danger" @click="delArt(scope.$index, scope.row)">删除</el-button>
+      </template>
+  </el-table-column>
+</el-table>
+<el-pagination
+  background
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      layout="total, prev, pager, next"
+      :total="total1"
+      :page-size="pagesize">
+</el-pagination>
+</el-tab-pane>
+<el-tab-pane label="书籍分享" name="second">
+<el-table
+:data="tableData2.slice((currentPage-1)*pagesize,currentPage*pagesize)"
 style="width: 100%">
 <el-table-column
       :prop="tit.prop"
@@ -25,39 +58,23 @@ style="width: 100%">
         <el-button
           size="mini"
            type="primary"
-          @click="pass(scope.$index, scope.row)">通过</el-button>
-            <el-button slot="reference" size="mini" type="danger" @click="noPass(scope.$index, scope.row)">不通过</el-button>
+          @click="editArt(scope.$index, scope.row)">修改</el-button>
+            <el-button slot="reference" size="mini" type="danger" @click="delArt(scope.$index, scope.row)">删除</el-button>
       </template>
-    </el-table-column>
-</el-table>
-</el-tab-pane>
-<el-tab-pane label="书籍分享" name="second">
-<el-table
-:data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-style="width: 100%">
-<el-table-column
-      :prop="tit.prop"
-      :label="tit.label"
-      :width="tit.width" v-for="(tit, index) in $consts.ARTICLE_TABLE" :key='index'>
-      <el-table-column
-        :prop="tit1.prop"
-        :label="tit1.label"
-        :width="tit1.width" v-for="(tit1, index1) in tit.children" :key='index1'>
   </el-table-column>
-</el-table-column>
 </el-table>
 <el-pagination
   background
       @current-change="handleCurrentChange"
       :current-page="currentPage"
       layout="total, prev, pager, next"
-      :total="total"
+      :total="total2"
       :page-size="pagesize">
 </el-pagination>
 </el-tab-pane>
 <el-tab-pane label="生活日志" name="third">
 <el-table
-:data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+:data="tableData3.slice((currentPage-1)*pagesize,currentPage*pagesize)"
 style="width: 100%">
 <el-table-column
       :prop="tit.prop"
@@ -69,13 +86,22 @@ style="width: 100%">
         :width="tit1.width" v-for="(tit1, index1) in tit.children" :key='index1'>
   </el-table-column>
 </el-table-column>
+<el-table-column label="操作" width="160">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+           type="primary"
+          @click="editArt(scope.$index, scope.row)">修改</el-button>
+            <el-button slot="reference" size="mini" type="danger" @click="delArt(scope.$index, scope.row)">删除</el-button>
+      </template>
+  </el-table-column>
 </el-table>
 <el-pagination
   background
       @current-change="handleCurrentChange"
       :current-page="currentPage"
       layout="total, prev, pager, next"
-      :total="total"
+      :total="total3"
       :page-size="pagesize">
 </el-pagination>
 </el-tab-pane>
@@ -86,9 +112,10 @@ style="width: 100%">
 
 <script>
 export default {
-  /*created () {
-    this.getInfo_0();//待审核
-    this.getInfo_1();//已审核
+  created () {
+    this.getInfo_1();//技术总结
+    this.getInfo_2();//书籍分享
+    this.getInfo_3();//书籍分享
   },
   inject: ['reload'],//注入reload方法
   methods: {
@@ -96,62 +123,59 @@ export default {
       this.currentPage = currentPage;
       console.log(this.currentPage)  //点击第几页
     },
-    pass (index,row) {
-      this.$axios.post(this.$consts.BASE_URL+'audStatus', {
-          status: 1,
-          data_type: 'seawater_info',
-          id: row.id
-        }).then(res=>{
-          if (res.data.code == 1) {
-            this.$message({message:'审核通过操作成功',type:'success'});
-            this.reload() 
-          } else {
-            this.$message({message:'操作失败',type:'error'});
-            return
-          }
-        })
+    editArt(index, row) {
+      this.$router.push({path:'/article/edit',query:{id:row.id,title:row.title,pic_url:row.pic_url,type:row.type,tags:row.tag,content:row.content}})
     },
-    noPass (index,row) {
-      this.$axios.post(this.$consts.BASE_URL+'audStatus', {
-          status: 2,
-          data_type: 'seawater_info',
+    delArt (index,row) {
+      this.$axios.post(this.$consts.BASE_URL+'delArt', {
+          type: row.type,
           id: row.id
         }).then(res=>{
-          if (res.data.code == 1) {
-            this.$message({message:'未通过操作成功',type:'success'});
+          if (res.data.code == 10200) {
+            this.$message({message:'删除成功成功',type:'success'});
             this.reload()
           } else {
-            this.$message({message:'操作失败',type:'error'});
+            this.$message({message:'删除失败，请重试',type:'error'});
             return
           }
-        })
-    },
-    getInfo_0() {    
-      this.$axios.post(this.$consts.BASE_URL+'audStatusData', {
-          data_type: 'seawater_info',
-          status: '0'
-        }).then(res=>{
-          this.tableData0 = res.data.data.list
         })
     },
     getInfo_1() {    
-      this.$axios.post(this.$consts.BASE_URL+'audStatusData', {
-          data_type: 'seawater_info',
-          status: '1'
+      this.$axios.post(this.$consts.BASE_URL+'artList', {
+          type: 1
         }).then(res=>{
           this.tableData1 = res.data.data.list
-          this.total = res.data.data.total
+          this.total1 = res.data.data.total
+        })
+    },
+    getInfo_2() {    
+      this.$axios.post(this.$consts.BASE_URL+'artList', {
+          type: 2
+        }).then(res=>{
+          this.tableData2 = res.data.data.list
+          this.total2 = res.data.data.total
+        })
+    },
+    getInfo_3() {    
+      this.$axios.post(this.$consts.BASE_URL+'artList', {
+          type: 3
+        }).then(res=>{
+          this.tableData3 = res.data.data.list
+          this.total3 = res.data.data.total
         })
     }
-  },*/
+  },
   data() {
         return {
           activeName: 'first',
-          total: 0,
+          total1: 0,
+          total2: 0,
+          total3: 0,
           currentPage:1, //初始页
           pagesize:this.$consts.PAGE_SIZE,    //每页的数据
-          tableData: [],
           tableData1: [],
+          tableData2: [],
+          tableData3: [],
         }
       }
 }
