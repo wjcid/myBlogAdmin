@@ -16,7 +16,9 @@
     <el-form-item label="插图：">
         <el-upload
             class="upload-demo"
-            action="23">
+            :action="action"
+            :data="updata"
+            :on-success="upsucess">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
@@ -40,9 +42,7 @@
     <quill-editor 
             v-model="formInfo.content" 
             ref="myQuillEditor" 
-            :options="editorOption" 
-            @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-            @change="onEditorChange($event)">
+            :options="editorOption">
         </quill-editor>
     </el-form-item>
     <el-form-item>
@@ -59,12 +59,25 @@ import { quillEditor } from "vue-quill-editor"; //调用编辑器
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
-
+import hljs from 'highlight.js'
+import 'highlight.js/styles/xcode.css'
 export default {
   components: {
     quillEditor
   },
   methods: {
+      //上传成功
+    upsucess(response,fileList) {
+      if (response.code == 1) {
+        this.$message({message:'上传成功',type:'success'});
+        this.formInfo.pic_url = response.data.url
+      } else {
+        this.$message({message: response.msg,type:'error'});
+        console.log(fileList)
+        this.formInfo.pic_url = ''
+        this.file_list = []
+      }
+    },
       onSubmit() {
         this.$axios.post(this.$consts.BASE_URL+'addArt', {
             title: this.formInfo.title,
@@ -103,9 +116,6 @@ export default {
         onEditorReady() { // 准备编辑器
  
         },
-        onEditorBlur(){}, // 失去焦点事件
-        onEditorFocus(){}, // 获得焦点事件
-        onEditorChange(){}, // 内容改变事件
          // 转码
         escapeStringHTML(str) {
             str = str.replace(/&lt;/g,'<');
@@ -121,9 +131,12 @@ export default {
     mounted() {
         let content = '';  // 请求后台返回的内容字符串
         this.str = this.escapeStringHTML(content);
+
     },
   data () {
       return {
+        action: this.$consts.BASE_URL+'upload',
+        updata: {genre: 'pic',token: localStorage.getItem('token')},
         options: [{
             value: '1',
             label: '技术总结'
@@ -184,8 +197,31 @@ export default {
             tags: [],
             type: ''
         },
-        content: `<p></p><p><br></p><ol><li><strong><em>Or drag/paste an image here.</em></strong></li><li><strong><em>rerew</em></strong></li><li><strong><em>rtrete</em></strong></li><li><strong><em>tytrytr</em></strong></li><li><strong><em>uytu</em></strong></li></ol>`,
-        editorOption: {}
+        editorOption: {
+            modules:{
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{ 'header': 1 }, { 'header': 2 }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'script': 'sub' }, { 'script': 'super' }],
+                    [{ 'indent': '-1' }, { 'indent': '+1' }],
+                    [{ 'direction': 'rtl' }],
+                    [{ 'size': ['small', 'medium', 'large', 'huge', 'false'] }],
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    [{ 'font': [] }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    ['clean'],
+                    ['link', 'image', 'video']
+                ],
+                syntax: {
+                    highlight: text => {
+                        return hljs.highlightAuto(text).value; // 这里就是代码高亮需要配置的地方
+                    }
+                }
+            }
+        }
       }
   }
 }

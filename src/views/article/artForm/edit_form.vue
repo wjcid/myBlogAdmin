@@ -16,7 +16,9 @@
     <el-form-item label="插图：">
         <el-upload
             class="upload-demo"
-            action="23">
+            :action="action"
+            :data="updata"
+            :on-success="upsucess">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
@@ -68,6 +70,18 @@ export default {
     this.tagoptions();
   },
   methods: {
+      //上传成功
+    upsucess(response,fileList) {
+      if (response.code == 1) {
+        this.$message({message:'上传成功',type:'success'});
+        this.formInfo.pic_url = response.data.url
+      } else {
+        this.$message({message: response.msg,type:'error'});
+        console.log(fileList)
+        this.formInfo.pic_url = ''
+        this.file_list = []
+      }
+    },
       onSubmit() {
         this.$axios.post(this.$consts.BASE_URL+'editArt', {
             id: this.$route.query.id,
@@ -137,6 +151,8 @@ export default {
     },
   data () {
       return {
+        action: this.$consts.BASE_URL+'upload',
+        updata: {genre: 'pic',token: localStorage.getItem('token')},
         options: [{
             value: '1',
             label: '技术总结'
