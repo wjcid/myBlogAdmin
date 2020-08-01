@@ -15,7 +15,7 @@
           <input class="form__input" type="text" placeholder="account/phone" v-model="loginInfo.account">
           <input class="form__input" type="password" placeholder="Password" autocomplete v-model="loginInfo.password">
           <a class="form__link">忘记密码?</a>
-          <button class="form__button button submit" @click="_submit">登录</button>
+          <button class="form__button button submit" @click.prevent="_submit">登录</button>
         </form>
       </div>
       <div class="switch" id="switch-cnt">
