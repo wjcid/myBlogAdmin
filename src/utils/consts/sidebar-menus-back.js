@@ -14,13 +14,13 @@ export default [
   {
     id: 3,
     name: 'pic',
-    title: '图片管理',
-    route: '/home'
+    title: '上传管理',
+    route: '/fileUpd/list'
   },
   {
     id: 4,
     name: 'paihang',
-    title: '排行榜管理',
+    title: '可视化统计',
     route: '/home'
   },
   {

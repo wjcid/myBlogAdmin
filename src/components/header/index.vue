@@ -1,6 +1,6 @@
 <template>
 <div class="header">
-    <div class="sys_name" @click="$router.push('/home')" style="cursor: pointer;">MyBlog后台管理系统</div>
+    <div class="sys_name" @click="$router.push('/home')" style="cursor: pointer;">后台管理系统</div>
       <i class="el-icon-switch-button" @click="$router.push('/')" style="cursor: pointer;"></i>
       <div class="n_time">{{time}}</div>
 </div>
