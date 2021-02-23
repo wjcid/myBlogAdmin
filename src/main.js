@@ -5,6 +5,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import components from '@/utils/components.js'
 import uploader from 'vue-simple-uploader'
+import VCharts from 'v-charts'
+Vue.use(VCharts)
 Vue.use(uploader)
 Vue.use(components)
 Vue.use(ElementUI)
